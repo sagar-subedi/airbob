@@ -5,18 +5,65 @@ const bcrypt = require("bcryptjs");
 const { default: mongoose } = require("mongoose");
 require("dotenv").config();
 const User = require("./models/User");
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: "http://localhost:5173",
+  })
+);
+
+app.use(cookieParser())
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 
 const bcryptSalt = bcrypt.genSaltSync(10);
+const jwtSecret = "sddsfdlkdjlkjwuieonoiejfoeijf";
+
 mongoose.connect(process.env.MONGO_URL);
 
 app.get("/test", (req, res) => {
   res.json("test ok");
+});
+
+
+app.post("/login", async (req, res) => {
+  console.log("login route called");
+  const { email, password } = req.body;
+  const userDoc = await User.findOne({ email });
+
+  if (userDoc) {
+    const passOk = bcrypt.compareSync(password, userDoc.password);
+
+    if (passOk) {
+
+
+      jwt.sign(
+        { email: userDoc.email,  id: userDoc._id, },
+        jwtSecret, {},
+        (err, token) => {
+          if (err) throw err;
+          res
+            .cookie("token", token, {
+              secure: true,
+              sameSite: "none",
+            })
+            .json(userDoc);
+        }
+      );
+
+
+    } else {
+      res.status(422).json("pass not ok");
+    }
+  } else {
+    res.json("not found");
+  }
 });
 
 app.post("/register", async (req, res) => {
@@ -30,6 +77,20 @@ app.post("/register", async (req, res) => {
     res.json(userDoc);
   } catch (e) {
     res.status(422).json(e);
+  }
+});
+
+app.get('/profile',  (req, res) => {
+  console.log('profile called');
+  const {token} = req.cookies;
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      const {name, email, _id} = await User.findById(userData.id);
+      res.json({name, email, _id});
+    })
+  }else{
+    res.json(null);
   }
 });
 
