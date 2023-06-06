@@ -7,6 +7,7 @@ import axios from "axios";
 import { Routes, Route, Link } from "react-router-dom";
 import Layout from "./Layout";
 import { UserContextProvider } from "./UserContext";
+import AccountPage from "./pages/AccountPage";
 
 axios.defaults.baseURL = 'http://localhost:4000';
 axios.defaults.withCredentials = true;
@@ -19,6 +20,8 @@ function App() {
           <Route index element={<IndexPage />}></Route>
           <Route path="/login" element={<LoginPage />}></Route>
           <Route path="/register" element={<RegisterPage />}></Route>
+          <Route path="/account/:subpage?" element={<AccountPage />}></Route>
+         
         </Route>
       </Routes>
     </UserContextProvider>

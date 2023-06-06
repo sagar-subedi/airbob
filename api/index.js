@@ -24,7 +24,6 @@ app.use(express.json());
 
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = "sddsfdlkdjlkjwuieonoiejfoeijf";
-
 mongoose.connect(process.env.MONGO_URL);
 
 app.get("/test", (req, res) => {
@@ -93,6 +92,15 @@ app.get('/profile',  (req, res) => {
     res.json(null);
   }
 });
+
+app.post('/logout', (req,res) => {
+  res.cookie('token', '').json(true);
+});
+
+
+
+  
+
 
 app.listen(4000, () => {
   console.log("The server is running successfully at port 4000");
