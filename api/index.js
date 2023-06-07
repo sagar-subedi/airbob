@@ -5,11 +5,13 @@ const bcrypt = require("bcryptjs");
 const { default: mongoose } = require("mongoose");
 require("dotenv").config();
 const User = require("./models/User");
+const Place = require("./models/Place");
 const jwt = require("jsonwebtoken");
 const imageDownloader = require('image-downloader');
 const cookieParser = require("cookie-parser");
 const multer = require("multer");
 const fs = require('fs')
+
 
 
 const app = express();
@@ -138,6 +140,23 @@ app.post('/upload', photosMiddleware.array('photos', 100), (req,res) => {
   }
   res.json(uploadedFiles);
 });
+
+app.post('/places', (req, res) => {
+  const {token} = req.cookies;
+  const {
+    title,address,addedPhotos,description,price,
+    perks,extraInfo,checkIn,checkOut,maxGuests,
+  } = req.body;
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) throw err;
+    const placeDoc = await Place.create({
+      owner:userData.id,price,
+      title,address,photos:addedPhotos,description,
+      perks,extraInfo,checkIn,checkOut,maxGuests,
+    });
+    res.json(placeDoc);
+  });
+})
 
 
   
