@@ -6,6 +6,7 @@ const { default: mongoose } = require("mongoose");
 require("dotenv").config();
 const User = require("./models/User");
 const jwt = require("jsonwebtoken");
+const imageDownloader = require('image-downloader');
 const cookieParser = require("cookie-parser");
 
 const app = express();
@@ -16,6 +17,9 @@ app.use(
     origin: "http://localhost:5173",
   })
 );
+
+app.use('/uploads', express.static(__dirname+'/uploads')); //Need to understand what this line is about
+
 
 app.use(cookieParser())
 
@@ -64,6 +68,26 @@ app.post("/login", async (req, res) => {
     res.json("not found");
   }
 });
+
+
+app.post('/upload-by-link', async (req,res) => {
+  const {link} = req.body;
+  console.log(__dirname)
+  const newName = 'photo' + Date.now() + '.jpg';
+  await imageDownloader.image({
+    url: link,
+    dest: __dirname + '\\uploads\\' + newName 
+  });
+  console.log('hello nebros')
+
+
+
+
+  // const url = await uploadToS3('/tmp/' +newName, newName, mime.lookup('/tmp/' +newName));
+  res.json(newName);
+});
+
+
 
 app.post("/register", async (req, res) => {
   const { name, email, password } = req.body;

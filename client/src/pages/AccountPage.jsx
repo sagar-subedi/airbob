@@ -7,7 +7,7 @@ import PlacesPage from "./PlacesPage";
 const AccountPage = () => {
   const [redirect, setRedirect] = useState(null);
   const { ready, user, setUser } = useContext(UserContext);
-  let { subpage } = useParams();
+  let {subpage} = useParams();;
   if (subpage === undefined) {
     subpage = "profile";
   }
