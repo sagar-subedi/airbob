@@ -1,4 +1,6 @@
 export default function Perks({selected,onChange}) {
+
+  //this function is triggered everytime the state of the checkbox is altered
     function handleCbClick(ev) {
       const {checked,name} = ev.target;
       if (checked) {
