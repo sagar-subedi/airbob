@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import AccountNav from "./../components/AccountNav";
+import axios from "axios";
 
 const PlacesPage = () => {
-  const { action } = useParams();
-  console.log(action);
-
+  const [places, setPlaces] = useState([]);
+  useEffect(() => {
+    axios.get('/places').then(({data})=>{
+        setPlaces(data);
+    })
+  },[])
+ 
   return (
     <div className="">
       <AccountNav></AccountNav>
