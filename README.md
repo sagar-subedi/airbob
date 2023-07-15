@@ -1,2 +1,2 @@
 # airbob
-An airbnb clone to make use of react and node.js skills to polish fullstack development skills.
+A fullstack application made using React.js (client) and Express.js (API) that attempts to implement some of the core features of AirBnB.
